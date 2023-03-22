@@ -1,21 +1,29 @@
-let aOperand = 0;
-let bOperand = 0;
-let operator;
+const numbers = document.querySelectorAll(".number");
+const operators = document.querySelectorAll(".operator");
+const expression = document.querySelector(".expression");
+const answer = document.querySelector(".answer");
+const equals = document.querySelector(".equals");
+
+let aOperand = [0];
+let bOperand = [];
+let operant;
+
+expression.textContent = aOperand;
 
 const add = (aNum, bNum) => {
-  return aNum + bNum;
+  return (answer.textContent = aNum + bNum);
 };
 
 const subtract = (aNum, bNum) => {
-  return aNum - bNum;
+  return (answer.textContent = aNum - bNum);
 };
 
 const multiply = (aNum, bNum) => {
-  return aNum * bNum;
+  return (answer.textContent = aNum * bNum);
 };
 
 const divide = (aNum, bNum) => {
-  return aNum / bNum;
+  return (answer.textContent = aNum / bNum);
 };
 
 const operate = (aNum, bNum, operator) => {
@@ -23,13 +31,13 @@ const operate = (aNum, bNum, operator) => {
     case "+":
       add(aNum, bNum);
       break;
-    case "-":
+    case "−":
       subtract(aNum, bNum);
       break;
-    case "*":
+    case "×":
       multiply(aNum, bNum);
       break;
-    case "/":
+    case "÷":
       divide(aNum, bNum);
       break;
     default:
@@ -37,3 +45,37 @@ const operate = (aNum, bNum, operator) => {
       break;
   }
 };
+
+numbers.forEach((number) => {
+  number.addEventListener("click", (event) => checkOperator(event));
+});
+
+operators.forEach((operator) => {
+  operator.addEventListener("click", (event) => {
+    operant = event.target.value;
+    expression.textContent = `${aOperand.slice(1).join("")} ${operant}`;
+  });
+});
+
+const checkOperator = (event) => {
+  switch (operant) {
+    case "+":
+    case "−":
+    case "×":
+    case "÷":
+      bOperand.push(event.target.value);
+      answer.textContent = `${bOperand.join("")}`;
+      break;
+    default:
+      aOperand.push(event.target.value);
+      expression.textContent = `${aOperand.slice(1).join("")}`;
+      break;
+  }
+};
+
+equals.addEventListener("click", () => {
+  expression.textContent = `${aOperand
+    .slice(1)
+    .join("")} ${operant} ${bOperand.join("")} = `;
+  operate(+aOperand.slice(1).join(""), +bOperand.join(""), operant);
+});
