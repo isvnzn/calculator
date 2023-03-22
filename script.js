@@ -23,7 +23,13 @@ const multiply = (aNum, bNum) => {
 };
 
 const divide = (aNum, bNum) => {
-  return (answer.textContent = aNum / bNum);
+  if (aNum === 0 && bNum === 0) {
+    answer.textContent = "Result is undefined";
+  } else if (bNum === 0) {
+    answer.textContent = "Cannot divide by zero";
+  } else {
+    answer.textContent = aNum / bNum;
+  }
 };
 
 const operate = (aNum, bNum, operator) => {
