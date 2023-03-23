@@ -63,7 +63,7 @@ operators.forEach((operator) => {
   operator.addEventListener("click", (event) => {
     operation = event.target.value;
     if (firstOperand.length < 2) {
-      expression.textContent = `${firstOperand} ${operation}`;
+      expression.textContent = `${firstOperand[0]} ${operation}`;
     } else {
       expression.textContent = `${firstObject} ${operation}`;
     }
@@ -89,14 +89,34 @@ const checkOperator = (event) => {
 };
 
 equals.addEventListener("click", () => {
-  if (+firstObject >= 1 && lastOperand.length === 0) {
-    expression.textContent = `${firstOperand.slice(1).join("")} = ${firstOperand
-      .slice(1)
-      .join("")} `;
-  } else if (firstOperand[0] === 0) {
-    expression.textContent = `${firstOperand[0]} = ${firstOperand[0]}`;
-  } else {
-    expression.textContent = `${firstObject} ${operation} ${lastObject} = `;
+  switch (true) {
+    case +firstObject >= 1 &&
+      lastOperand.length === 0 &&
+      operation === undefined:
+      expression.textContent = `${firstOperand
+        .slice(1)
+        .join("")} = ${firstOperand.slice(1).join("")} `;
+      break;
+    case +firstObject >= 1 && lastOperand.length === 0:
+      lastObject = firstOperand.slice(1).join("");
+      expression.textContent = `${firstOperand
+        .slice(1)
+        .join("")} ${operation} ${lastObject} = `;
+      break;
+    case firstOperand[0] === 0 && operation === undefined:
+      expression.textContent = `${firstOperand[0]} = ${firstOperand[0]}`;
+      break;
+    case firstOperand[0] === 0 &&
+      lastOperand.length === 0 &&
+      operation !== undefined:
+      expression.textContent = `${firstOperand[0]} ${operation} ${firstOperand[0]} = `;
+      break;
+    case firstOperand[0] === 0 && operation !== undefined:
+      expression.textContent = `${firstOperand[0]} ${operation} ${lastObject} = `;
+      break;
+    default:
+      expression.textContent = `${firstObject} ${operation} ${lastObject} = `;
+      break;
   }
 
   operate(+firstObject, +lastObject, operation);
