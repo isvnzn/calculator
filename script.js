@@ -4,47 +4,50 @@ const expression = document.querySelector(".expression");
 const answer = document.querySelector(".answer");
 const equals = document.querySelector(".equals");
 
-let aOperand = [0];
-let bOperand = [];
-let operant;
+let firstOperand = [0];
+let lastOperand = [];
+let firstObject = [];
+let lastObject = [];
 
-expression.textContent = aOperand;
+let operation;
 
-const add = (aNum, bNum) => {
-  return (answer.textContent = aNum + bNum);
+expression.textContent = firstOperand;
+
+const add = (firstNumber, lastNumber) => {
+  return (answer.textContent = firstNumber + lastNumber);
 };
 
-const subtract = (aNum, bNum) => {
-  return (answer.textContent = aNum - bNum);
+const subtract = (firstNumber, lastNumber) => {
+  return (answer.textContent = firstNumber - lastNumber);
 };
 
-const multiply = (aNum, bNum) => {
-  return (answer.textContent = aNum * bNum);
+const multiply = (firstNumber, lastNumber) => {
+  return (answer.textContent = firstNumber * lastNumber);
 };
 
-const divide = (aNum, bNum) => {
-  if (aNum === 0 && bNum === 0) {
+const divide = (firstNumber, lastNumber) => {
+  if (firstNumber === 0 && lastNumber === 0) {
     answer.textContent = "Result is undefined";
-  } else if (bNum === 0) {
+  } else if (lastNumber === 0) {
     answer.textContent = "Cannot divide by zero";
   } else {
-    answer.textContent = aNum / bNum;
+    answer.textContent = firstNumber / lastNumber;
   }
 };
 
-const operate = (aNum, bNum, operator) => {
+const operate = (firstNumber, lastNumber, operator) => {
   switch (operator) {
     case "+":
-      add(aNum, bNum);
+      add(firstNumber, lastNumber);
       break;
     case "−":
-      subtract(aNum, bNum);
+      subtract(firstNumber, lastNumber);
       break;
     case "×":
-      multiply(aNum, bNum);
+      multiply(firstNumber, lastNumber);
       break;
     case "÷":
-      divide(aNum, bNum);
+      divide(firstNumber, lastNumber);
       break;
     default:
       console.log("Something went wrong.");
@@ -58,30 +61,43 @@ numbers.forEach((number) => {
 
 operators.forEach((operator) => {
   operator.addEventListener("click", (event) => {
-    operant = event.target.value;
-    expression.textContent = `${aOperand.slice(1).join("")} ${operant}`;
+    operation = event.target.value;
+    if (firstOperand.length < 2) {
+      expression.textContent = `${firstOperand} ${operation}`;
+    } else {
+      expression.textContent = `${firstObject} ${operation}`;
+    }
   });
 });
 
 const checkOperator = (event) => {
-  switch (operant) {
+  switch (operation) {
     case "+":
     case "−":
     case "×":
     case "÷":
-      bOperand.push(event.target.value);
-      answer.textContent = `${bOperand.join("")}`;
+      lastOperand.push(event.target.value);
+      lastObject = lastOperand.join("");
+      answer.textContent = `${lastObject}`;
       break;
     default:
-      aOperand.push(event.target.value);
-      expression.textContent = `${aOperand.slice(1).join("")}`;
+      firstOperand.push(event.target.value);
+      firstObject = firstOperand.slice(1).join("");
+      expression.textContent = `${firstObject}`;
       break;
   }
 };
 
 equals.addEventListener("click", () => {
-  expression.textContent = `${aOperand
-    .slice(1)
-    .join("")} ${operant} ${bOperand.join("")} = `;
-  operate(+aOperand.slice(1).join(""), +bOperand.join(""), operant);
+  if (+firstObject >= 1 && lastOperand.length === 0) {
+    expression.textContent = `${firstOperand.slice(1).join("")} = ${firstOperand
+      .slice(1)
+      .join("")} `;
+  } else if (firstOperand[0] === 0) {
+    expression.textContent = `${firstOperand[0]} = ${firstOperand[0]}`;
+  } else {
+    expression.textContent = `${firstObject} ${operation} ${lastObject} = `;
+  }
+
+  operate(+firstObject, +lastObject, operation);
 });
