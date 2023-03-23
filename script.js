@@ -50,7 +50,6 @@ const operate = (firstNumber, lastNumber, operator) => {
       divide(firstNumber, lastNumber);
       break;
     default:
-      console.log("Something went wrong.");
       break;
   }
 };
@@ -113,8 +112,13 @@ const checkOperands = () => {
       operation !== undefined:
       expression.textContent = `${firstOperand[0]} ${operation} ${firstOperand[0]} = `;
       break;
-    case firstOperand[0] === 0 && operation !== undefined:
-      expression.textContent = `${firstOperand[0]} ${operation} ${lastObject} = `;
+    case firstOperand[0] === 0 &&
+      lastOperand.length >= 1 &&
+      operation !== undefined:
+      if (firstObject.length === 0) {
+        firstObject = 0;
+      }
+      expression.textContent = `${firstObject} ${operation} ${lastObject} = `;
       break;
     default:
       expression.textContent = `${firstObject} ${operation} ${lastObject} = `;
