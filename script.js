@@ -77,12 +77,20 @@ const checkOperator = (event) => {
     case "÷":
       lastOperand.push(event.target.value);
       lastObject = lastOperand.join("");
-      answer.textContent = `${lastObject}`;
+      answer.textContent = lastObject;
       break;
     default:
-      firstOperand.push(event.target.value);
-      firstObject = firstOperand.slice(1).join("");
-      expression.textContent = `${firstObject}`;
+      if (
+        event.target.value === "0" &&
+        firstOperand[0] === 0 &&
+        firstOperand.length < 2
+      ) {
+        firstOperand = [0];
+      } else {
+        firstOperand.push(event.target.value);
+        firstObject = firstOperand.slice(1).join("");
+        expression.textContent = firstObject;
+      }
       break;
   }
 };
