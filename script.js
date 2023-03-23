@@ -88,7 +88,9 @@ const checkOperator = (event) => {
   }
 };
 
-equals.addEventListener("click", () => {
+equals.addEventListener("click", () => checkOperands());
+
+const checkOperands = () => {
   switch (true) {
     case +firstObject >= 1 &&
       lastOperand.length === 0 &&
@@ -120,4 +122,4 @@ equals.addEventListener("click", () => {
   }
 
   operate(+firstObject, +lastObject, operation);
-});
+};
