@@ -1,35 +1,40 @@
 const numbers = document.querySelectorAll(".number");
 const operators = document.querySelectorAll(".operator");
-const expression = document.querySelector(".expression");
-const answer = document.querySelector(".answer");
+const topDisplay = document.querySelector(".topDisplay");
+const bottomDisplay = document.querySelector(".bottomDisplay");
 const equals = document.querySelector(".equals");
 
 let firstOperand = [];
 let lastOperand = [];
+let answer;
 
 let operation;
 
-expression.textContent = "0";
+topDisplay.textContent = "0";
 
 const add = (firstNumber, lastNumber) => {
-  return (answer.textContent = firstNumber + lastNumber);
+  answer = firstNumber + lastNumber;
+  bottomDisplay.textContent = answer;
 };
 
 const subtract = (firstNumber, lastNumber) => {
-  return (answer.textContent = firstNumber - lastNumber);
+  answer = firstNumber - lastNumber;
+  bottomDisplay.textContent = answer;
 };
 
 const multiply = (firstNumber, lastNumber) => {
-  return (answer.textContent = firstNumber * lastNumber);
+  answer = firstNumber * lastNumber;
+  bottomDisplay.textContent = answer;
 };
 
 const divide = (firstNumber, lastNumber) => {
   if (firstNumber === 0 && lastNumber === 0) {
-    answer.textContent = "Result is undefined";
+    bottomDisplay.textContent = "Result is undefined";
   } else if (lastNumber === 0) {
-    answer.textContent = "Cannot divide by zero";
+    bottomDisplay.textContent = "Cannot divide by zero";
   } else {
-    answer.textContent = firstNumber / lastNumber;
+    answer = firstNumber / lastNumber;
+    bottomDisplay.textContent = answer;
   }
 };
 
@@ -53,7 +58,9 @@ const operate = (firstNumber, lastNumber, operator) => {
 };
 
 numbers.forEach((number) => {
-  number.addEventListener("click", (event) => getOperand(event));
+  number.addEventListener("click", (event) => {
+    getOperand(event);
+  });
 });
 
 operators.forEach((operator) => {
@@ -69,17 +76,18 @@ const getOperand = (event) => {
     case "×":
     case "÷":
       if (lastOperand.length < 1 && event.target.value === "0") {
-        answer.textContent = "0";
+        bottomDisplay.textContent = "0";
+        console.log(lastOperand);
       } else {
         lastOperand.push(event.target.value);
-        answer.textContent = lastOperand.join("");
+        bottomDisplay.textContent = lastOperand.join("");
       }
       break;
     default:
       if (firstOperand.length < 1 && event.target.value === "0") {
       } else {
         firstOperand.push(event.target.value);
-        expression.textContent = firstOperand.join("");
+        topDisplay.textContent = firstOperand.join("");
       }
       break;
   }
@@ -90,28 +98,40 @@ const getOperator = (event) => {
 
   if (firstOperand.length === 0) {
     firstOperand = [0];
+  } else if (answer !== undefined) {
+    lastOperand = [];
+    firstOperand = [answer];
+    topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
   }
 
-  expression.textContent = `${firstOperand.join("")} ${operation}`;
-  answer.textContent = firstOperand.join("");
+  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
+  bottomDisplay.textContent = firstOperand.join("");
 };
 
 const checkOperands = () => {
   switch (true) {
     case firstOperand.length < 1:
-      expression.textContent = "0 =";
-      answer.textContent = "0";
+      answer = 0;
+      topDisplay.textContent = "0 =";
+      bottomDisplay.textContent = answer;
       break;
     case firstOperand.length >= 1 &&
       lastOperand.length < 1 &&
       operation === undefined:
-      expression.textContent = `${firstOperand.join("")} =`;
-      answer.textContent = firstOperand.join("");
+      answer = firstOperand.join("");
+      topDisplay.textContent = `${answer} =`;
+      bottomDisplay.textContent = answer;
       break;
     case firstOperand.length >= 1 &&
       lastOperand.length >= 1 &&
       operation !== undefined:
-      expression.textContent = `${firstOperand.join(
+      topDisplay.textContent = `${firstOperand.join(
+        ""
+      )} ${operation} ${lastOperand.join("")} =`;
+      break;
+    case bottomDisplay.textContent === "0":
+      lastOperand.push(0);
+      topDisplay.textContent = `${firstOperand.join(
         ""
       )} ${operation} ${lastOperand.join("")} =`;
       break;
@@ -119,7 +139,7 @@ const checkOperands = () => {
       lastOperand.length < 1 &&
       operation !== undefined:
       lastOperand = firstOperand;
-      expression.textContent = `${firstOperand.join(
+      topDisplay.textContent = `${firstOperand.join(
         ""
       )} ${operation} ${lastOperand.join("")} =`;
       break;
