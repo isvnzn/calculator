@@ -4,6 +4,7 @@ const topDisplay = document.querySelector(".topDisplay");
 const bottomDisplay = document.querySelector(".bottomDisplay");
 const equals = document.querySelector(".equals");
 const clearBtn = document.querySelector(".clear");
+const deleteBtn = document.querySelector(".delete");
 
 let firstOperand = [];
 let lastOperand = [];
@@ -28,6 +29,8 @@ clearBtn.addEventListener("click", () => {
   topDisplay.textContent = "0";
   bottomDisplay.textContent = "";
 });
+
+deleteBtn.addEventListener("click", () => delOperand());
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -83,6 +86,37 @@ const reset = () => {
   answer = null;
 };
 
+const delOperand = () => {
+  if (firstOperand.length >= 1 && lastOperand.length >= 1 && answer !== null) {
+    reset();
+    topDisplay.textContent = "0";
+    bottomDisplay.textContent = "";
+  } else if (
+    operation !== "" &&
+    firstOperand.length >= 1 &&
+    lastOperand.length < 1
+  ) {
+    //do nothing
+  } else if (firstOperand.length > 1 && lastOperand.length < 1) {
+    firstOperand.pop();
+    topDisplay.textContent = firstOperand.join("");
+  } else if (lastOperand.length > 1 && firstOperand.length >= 1) {
+    lastOperand.pop();
+    bottomDisplay.textContent = lastOperand.join("");
+  } else if (firstOperand[0] === 0 && lastOperand.length > 1) {
+    lastOperand.pop();
+    bottomDisplay.textContent = lastOperand.join("");
+  } else if (firstOperand.length <= 1 && lastOperand.length < 1) {
+    topDisplay.textContent = "0";
+    firstOperand = [];
+  } else if (lastOperand.length <= 1) {
+    bottomDisplay.textContent = "0";
+    lastOperand = [];
+  }
+};
+
+let isOperator = false;
+
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
     reset();
@@ -112,8 +146,11 @@ const getOperand = (event) => {
   }
 };
 
+let old = [];
 const getOperator = (event) => {
   operation = event.target.value;
+  isOperator = true;
+  old.push(operation);
 
   if (firstOperand.length === 0) {
     firstOperand = [0];
@@ -124,8 +161,17 @@ const getOperator = (event) => {
     hasOperate = false;
   }
 
-  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
   bottomDisplay.textContent = firstOperand.join("");
+  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
+
+  if (firstOperand.length >= 1 && lastOperand.length >= 1) {
+    let prevOperation = old[0];
+    operate(+firstOperand.join(""), +lastOperand.join(""), prevOperation);
+    topDisplay.textContent = `${answer} ${operation}`;
+    firstOperand = [answer];
+    lastOperand = [];
+    old = [];
+  }
 };
 
 const checkOperands = () => {
