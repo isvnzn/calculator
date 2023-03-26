@@ -29,8 +29,10 @@ const multiply = (firstNumber, lastNumber) => {
 
 const divide = (firstNumber, lastNumber) => {
   if (firstNumber === 0 && lastNumber === 0) {
+    answer = 0;
     bottomDisplay.textContent = "Result is undefined";
   } else if (lastNumber === 0) {
+    answer = 0;
     bottomDisplay.textContent = "Cannot divide by zero";
   } else {
     answer = firstNumber / lastNumber;
@@ -69,7 +71,18 @@ operators.forEach((operator) => {
 
 equals.addEventListener("click", () => checkOperands());
 
+let hasOperate = false;
+
 const getOperand = (event) => {
+  if (answer !== undefined && hasOperate === true) {
+    firstOperand = [];
+    lastOperand = [];
+    operation = undefined;
+    answer = undefined;
+    bottomDisplay.textContent = "";
+    topDisplay.textContent = "";
+  }
+
   switch (operation) {
     case "+":
     case "−":
@@ -77,7 +90,6 @@ const getOperand = (event) => {
     case "÷":
       if (lastOperand.length < 1 && event.target.value === "0") {
         bottomDisplay.textContent = "0";
-        console.log(lastOperand);
       } else {
         lastOperand.push(event.target.value);
         bottomDisplay.textContent = lastOperand.join("");
@@ -85,6 +97,7 @@ const getOperand = (event) => {
       break;
     default:
       if (firstOperand.length < 1 && event.target.value === "0") {
+        topDisplay.textContent = "0";
       } else {
         firstOperand.push(event.target.value);
         topDisplay.textContent = firstOperand.join("");
@@ -102,6 +115,7 @@ const getOperator = (event) => {
     lastOperand = [];
     firstOperand = [answer];
     topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
+    hasOperate = false;
   }
 
   topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
@@ -148,4 +162,5 @@ const checkOperands = () => {
   }
 
   operate(+firstOperand.join(""), +lastOperand.join(""), operation);
+  hasOperate = true;
 };
