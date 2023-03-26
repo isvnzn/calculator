@@ -3,13 +3,31 @@ const operators = document.querySelectorAll(".operator");
 const topDisplay = document.querySelector(".topDisplay");
 const bottomDisplay = document.querySelector(".bottomDisplay");
 const equals = document.querySelector(".equals");
+const clearBtn = document.querySelector(".clear");
 
 let firstOperand = [];
 let lastOperand = [];
 let answer = null;
 let operation = "";
+let hasOperate = false;
 
 topDisplay.textContent = "0";
+
+numbers.forEach((number) => {
+  number.addEventListener("click", (event) => getOperand(event));
+});
+
+operators.forEach((operator) => {
+  operator.addEventListener("click", (event) => getOperator(event));
+});
+
+equals.addEventListener("click", () => checkOperands());
+
+clearBtn.addEventListener("click", () => {
+  reset();
+  topDisplay.textContent = "0";
+  bottomDisplay.textContent = "";
+});
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -58,28 +76,17 @@ const operate = (firstNumber, lastNumber, operator) => {
   }
 };
 
-numbers.forEach((number) => {
-  number.addEventListener("click", (event) => {
-    getOperand(event);
-  });
-});
-
-operators.forEach((operator) => {
-  operator.addEventListener("click", (event) => getOperator(event));
-});
-
-equals.addEventListener("click", () => checkOperands());
-
-let hasOperate = false;
+const reset = () => {
+  firstOperand = [];
+  lastOperand = [];
+  operation = "";
+  answer = null;
+};
 
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
-    firstOperand = [];
-    lastOperand = [];
-    operation = "";
-    answer = null;
+    reset();
     bottomDisplay.textContent = "";
-    topDisplay.textContent = "";
   }
 
   switch (operation) {
