@@ -6,9 +6,8 @@ const equals = document.querySelector(".equals");
 
 let firstOperand = [];
 let lastOperand = [];
-let answer;
-
-let operation;
+let answer = null;
+let operation = "";
 
 topDisplay.textContent = "0";
 
@@ -74,11 +73,11 @@ equals.addEventListener("click", () => checkOperands());
 let hasOperate = false;
 
 const getOperand = (event) => {
-  if (answer !== undefined && hasOperate === true) {
+  if (answer !== null && hasOperate === true) {
     firstOperand = [];
     lastOperand = [];
-    operation = undefined;
-    answer = undefined;
+    operation = "";
+    answer = null;
     bottomDisplay.textContent = "";
     topDisplay.textContent = "";
   }
@@ -111,7 +110,7 @@ const getOperator = (event) => {
 
   if (firstOperand.length === 0) {
     firstOperand = [0];
-  } else if (answer !== undefined) {
+  } else if (answer !== null) {
     lastOperand = [];
     firstOperand = [answer];
     topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
@@ -129,16 +128,14 @@ const checkOperands = () => {
       topDisplay.textContent = "0 =";
       bottomDisplay.textContent = answer;
       break;
-    case firstOperand.length >= 1 &&
-      lastOperand.length < 1 &&
-      operation === undefined:
+    case firstOperand.length >= 1 && lastOperand.length < 1 && operation === "":
       answer = firstOperand.join("");
       topDisplay.textContent = `${answer} =`;
       bottomDisplay.textContent = answer;
       break;
     case firstOperand.length >= 1 &&
       lastOperand.length >= 1 &&
-      operation !== undefined:
+      operation !== "":
       topDisplay.textContent = `${firstOperand.join(
         ""
       )} ${operation} ${lastOperand.join("")} =`;
@@ -149,9 +146,7 @@ const checkOperands = () => {
         ""
       )} ${operation} ${lastOperand.join("")} =`;
       break;
-    case firstOperand.length >= 1 &&
-      lastOperand.length < 1 &&
-      operation !== undefined:
+    case firstOperand.length >= 1 && lastOperand.length < 1 && operation !== "":
       lastOperand = firstOperand;
       topDisplay.textContent = `${firstOperand.join(
         ""
