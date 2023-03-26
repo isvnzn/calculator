@@ -87,10 +87,17 @@ const reset = () => {
 };
 
 const delOperand = () => {
-  if (firstOperand.length >= 1 && lastOperand.length >= 1 && answer !== null) {
+  if (
+    firstOperand.length >= 1 &&
+    lastOperand.length >= 1 &&
+    answer !== null &&
+    hasOperate == true
+  ) {
     reset();
     topDisplay.textContent = "0";
     bottomDisplay.textContent = "";
+  } else if (operation === "" && firstOperand.length >= 1 && answer !== null) {
+    //do nothing
   } else if (
     operation !== "" &&
     firstOperand.length >= 1 &&
@@ -106,7 +113,11 @@ const delOperand = () => {
   } else if (firstOperand[0] === 0 && lastOperand.length > 1) {
     lastOperand.pop();
     bottomDisplay.textContent = lastOperand.join("");
-  } else if (firstOperand.length <= 1 && lastOperand.length < 1) {
+  } else if (
+    firstOperand.length <= 1 &&
+    lastOperand.length < 1 &&
+    topDisplay.textContent !== "0 ="
+  ) {
     topDisplay.textContent = "0";
     firstOperand = [];
   } else if (lastOperand.length <= 1) {
@@ -114,8 +125,6 @@ const delOperand = () => {
     lastOperand = [];
   }
 };
-
-let isOperator = false;
 
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
@@ -144,17 +153,18 @@ const getOperand = (event) => {
       }
       break;
   }
+
+  hasOperate = false;
 };
 
 let old = [];
 const getOperator = (event) => {
   operation = event.target.value;
-  isOperator = true;
   old.push(operation);
-
+  console.log(old);
   if (firstOperand.length === 0) {
     firstOperand = [0];
-  } else if (answer !== null) {
+  } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
     firstOperand = [answer];
     topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
@@ -164,13 +174,12 @@ const getOperator = (event) => {
   bottomDisplay.textContent = firstOperand.join("");
   topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
 
+  let prevOperation = old[old.length - 2];
   if (firstOperand.length >= 1 && lastOperand.length >= 1) {
-    let prevOperation = old[0];
     operate(+firstOperand.join(""), +lastOperand.join(""), prevOperation);
     topDisplay.textContent = `${answer} ${operation}`;
     firstOperand = [answer];
     lastOperand = [];
-    old = [];
   }
 };
 
