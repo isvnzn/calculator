@@ -5,6 +5,7 @@ const bottomDisplay = document.querySelector(".bottomDisplay");
 const equalBtn = document.querySelector(".equals");
 const clearBtn = document.querySelector(".clear");
 const deleteBtn = document.querySelector(".delete");
+const decimalBtn = document.querySelector(".decimal");
 
 let firstOperand = [];
 let lastOperand = [];
@@ -23,15 +24,10 @@ operators.forEach((operator) => {
   operator.addEventListener("click", (event) => getOperator(event));
 });
 
-equalBtn.addEventListener("click", () => checkOperands());
-
-clearBtn.addEventListener("click", () => {
-  reset();
-  topDisplay.textContent = "0";
-  bottomDisplay.textContent = "";
-});
-
+clearBtn.addEventListener("click", () => reset());
 deleteBtn.addEventListener("click", () => delOperand());
+decimalBtn.addEventListener("click", (event) => applyDecimal(event));
+equalBtn.addEventListener("click", () => checkOperands());
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -85,6 +81,8 @@ const reset = () => {
   lastOperand = [];
   operation = "";
   answer = null;
+  topDisplay.textContent = "0";
+  bottomDisplay.textContent = "";
 };
 
 const delOperand = () => {
@@ -94,8 +92,6 @@ const delOperand = () => {
       answer !== null &&
       hasOperate == true:
       reset();
-      topDisplay.textContent = "0";
-      bottomDisplay.textContent = "";
       break;
     case operation === "" && firstOperand.length >= 1 && answer !== null:
     case operation !== "" && firstOperand.length >= 1 && lastOperand.length < 1:
@@ -127,7 +123,6 @@ const delOperand = () => {
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
     reset();
-    bottomDisplay.textContent = "";
   }
 
   switch (operation) {
@@ -159,7 +154,7 @@ const getOperator = (event) => {
   operation = event.target.value;
   prevOperation.push(operation);
 
-  if (firstOperand.length === 0) {
+  if (firstOperand.length < 1) {
     firstOperand = [0];
   } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
@@ -220,4 +215,35 @@ const checkOperands = () => {
   operate(+firstOperand.join(""), +lastOperand.join(""), operation);
   hasOperate = true;
   prevOperation = [];
+};
+
+const applyDecimal = (event) => {
+  switch (true) {
+    case firstOperand.includes("."):
+    case lastOperand.includes("."):
+      break;
+    case firstOperand.length >= 1 && operation === "" && hasOperate === false:
+      firstOperand.push(event.target.value);
+      topDisplay.textContent = firstOperand.join("");
+      break;
+    case lastOperand.length < 1 && operation === "":
+      firstOperand = [0];
+      firstOperand.push(event.target.value);
+      topDisplay.textContent = firstOperand.join("");
+      break;
+    case firstOperand.length >= 1 &&
+      lastOperand.length >= 1 &&
+      operation !== "":
+      lastOperand.push(event.target.value);
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    case firstOperand.length >= 1 && operation !== "":
+    case firstOperand.length >= 1 && hasOperate === true:
+      lastOperand = [0];
+      lastOperand.push(event.target.value);
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    default:
+      break;
+  }
 };
