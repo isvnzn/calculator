@@ -10,6 +10,7 @@ let firstOperand = [];
 let lastOperand = [];
 let answer = null;
 let operation = "";
+let prevOperation = [];
 let hasOperate = false;
 
 topDisplay.textContent = "0";
@@ -155,11 +156,10 @@ const getOperand = (event) => {
   hasOperate = false;
 };
 
-let old = [];
 const getOperator = (event) => {
   operation = event.target.value;
-  old.push(operation);
-  console.log(old);
+  prevOperation.push(operation);
+
   if (firstOperand.length === 0) {
     firstOperand = [0];
   } else if (answer !== null && hasOperate === true) {
@@ -167,18 +167,20 @@ const getOperator = (event) => {
     firstOperand = [answer];
     topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
     hasOperate = false;
-  }
-
-  bottomDisplay.textContent = firstOperand.join("");
-  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
-
-  let prevOperation = old[old.length - 2];
-  if (firstOperand.length >= 1 && lastOperand.length >= 1) {
-    operate(+firstOperand.join(""), +lastOperand.join(""), prevOperation);
+  } else if (firstOperand.length >= 1 && lastOperand.length >= 1) {
+    operate(
+      +firstOperand.join(""),
+      +lastOperand.join(""),
+      prevOperation[prevOperation.length - 2]
+    );
     topDisplay.textContent = `${answer} ${operation}`;
     firstOperand = [answer];
     lastOperand = [];
+    prevOperation = [];
   }
+
+  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
+  bottomDisplay.textContent = firstOperand.join("");
 };
 
 const checkOperands = () => {
@@ -218,4 +220,5 @@ const checkOperands = () => {
 
   operate(+firstOperand.join(""), +lastOperand.join(""), operation);
   hasOperate = true;
+  prevOperation = [];
 };
