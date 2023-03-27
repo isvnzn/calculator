@@ -219,15 +219,18 @@ const checkOperands = () => {
 
 const applyDecimal = (event) => {
   switch (true) {
-    case firstOperand.includes(".") && lastOperand.length < 1:
-    case lastOperand.includes(".") && firstOperand.length >= 1:
+    case firstOperand.includes(".") &&
+      firstOperand.length >= 1 &&
+      operation === "" &&
+      hasOperate === false:
+    case lastOperand.includes(".") && operation !== "":
       break;
     case topDisplay.textContent === "0 =":
     case answer !== null && hasOperate === true:
+      reset();
       firstOperand = [0];
       firstOperand.push(event.target.value);
       topDisplay.textContent = firstOperand.join("");
-      bottomDisplay.textContent = "";
       break;
     case firstOperand.length >= 1 && operation === "" && hasOperate === false:
       firstOperand.push(event.target.value);
