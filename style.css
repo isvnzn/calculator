@@ -1,0 +1,8 @@
+.bottomDisplay {
+  background-color: yellow;
+}
+
+.topDisplay {
+  background-color: aqua;
+  display: block;
+}
