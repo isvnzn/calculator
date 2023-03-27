@@ -90,7 +90,7 @@ const delOperand = () => {
     case firstOperand.length >= 1 &&
       lastOperand.length >= 1 &&
       answer !== null &&
-      hasOperate == true:
+      hasOperate === true:
       reset();
       break;
     case operation === "" && firstOperand.length >= 1 && answer !== null:
