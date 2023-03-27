@@ -87,42 +87,40 @@ const reset = () => {
 };
 
 const delOperand = () => {
-  if (
-    firstOperand.length >= 1 &&
-    lastOperand.length >= 1 &&
-    answer !== null &&
-    hasOperate == true
-  ) {
-    reset();
-    topDisplay.textContent = "0";
-    bottomDisplay.textContent = "";
-  } else if (operation === "" && firstOperand.length >= 1 && answer !== null) {
-    //do nothing
-  } else if (
-    operation !== "" &&
-    firstOperand.length >= 1 &&
-    lastOperand.length < 1
-  ) {
-    //do nothing
-  } else if (firstOperand.length > 1 && lastOperand.length < 1) {
-    firstOperand.pop();
-    topDisplay.textContent = firstOperand.join("");
-  } else if (lastOperand.length > 1 && firstOperand.length >= 1) {
-    lastOperand.pop();
-    bottomDisplay.textContent = lastOperand.join("");
-  } else if (firstOperand[0] === 0 && lastOperand.length > 1) {
-    lastOperand.pop();
-    bottomDisplay.textContent = lastOperand.join("");
-  } else if (
-    firstOperand.length <= 1 &&
-    lastOperand.length < 1 &&
-    topDisplay.textContent !== "0 ="
-  ) {
-    topDisplay.textContent = "0";
-    firstOperand = [];
-  } else if (lastOperand.length <= 1) {
-    bottomDisplay.textContent = "0";
-    lastOperand = [];
+  switch (true) {
+    case firstOperand.length >= 1 &&
+      lastOperand.length >= 1 &&
+      answer !== null &&
+      hasOperate == true:
+      reset();
+      topDisplay.textContent = "0";
+      bottomDisplay.textContent = "";
+      break;
+    case operation === "" && firstOperand.length >= 1 && answer !== null:
+    case operation !== "" && firstOperand.length >= 1 && lastOperand.length < 1:
+      //do nothing
+      break;
+    case firstOperand.length > 1 && lastOperand.length < 1:
+      firstOperand.pop();
+      topDisplay.textContent = firstOperand.join("");
+      break;
+    case lastOperand.length > 1 && firstOperand.length >= 1:
+    case firstOperand[0] === 0 && lastOperand.length > 1:
+      lastOperand.pop();
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    case firstOperand.length <= 1 &&
+      lastOperand.length < 1 &&
+      topDisplay.textContent !== "0 =":
+      topDisplay.textContent = "0";
+      firstOperand = [];
+      break;
+    case lastOperand.length <= 1:
+      bottomDisplay.textContent = "0";
+      lastOperand = [];
+      break;
+    default:
+      break;
   }
 };
 
