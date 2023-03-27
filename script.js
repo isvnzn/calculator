@@ -2,7 +2,7 @@ const numbers = document.querySelectorAll(".number");
 const operators = document.querySelectorAll(".operator");
 const topDisplay = document.querySelector(".topDisplay");
 const bottomDisplay = document.querySelector(".bottomDisplay");
-const equals = document.querySelector(".equals");
+const equalBtn = document.querySelector(".equals");
 const clearBtn = document.querySelector(".clear");
 const deleteBtn = document.querySelector(".delete");
 
@@ -23,7 +23,7 @@ operators.forEach((operator) => {
   operator.addEventListener("click", (event) => getOperator(event));
 });
 
-equals.addEventListener("click", () => checkOperands());
+equalBtn.addEventListener("click", () => checkOperands());
 
 clearBtn.addEventListener("click", () => {
   reset();
