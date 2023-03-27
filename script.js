@@ -99,7 +99,6 @@ const delOperand = () => {
       break;
     case operation === "" && firstOperand.length >= 1 && answer !== null:
     case operation !== "" && firstOperand.length >= 1 && lastOperand.length < 1:
-      //do nothing
       break;
     case firstOperand.length > 1 && lastOperand.length < 1:
       firstOperand.pop();
