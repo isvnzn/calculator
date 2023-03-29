@@ -139,7 +139,12 @@ const getOperand = (event) => {
     case "×":
     case "÷":
       if (lastOperand.length <= 1 && event.target.value === "0") {
+        lastOperand.pop();
         bottomDisplay.textContent = "0";
+      } else if (lastOperand.length === 1 && lastOperand.join("") === "0") {
+        lastOperand.pop();
+        lastOperand.push(event.target.value);
+        bottomDisplay.textContent = lastOperand.join("");
       } else {
         lastOperand.push(event.target.value);
         bottomDisplay.textContent = lastOperand.join("");
