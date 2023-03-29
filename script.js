@@ -46,11 +46,11 @@ const multiply = (firstNumber, lastNumber) => {
 
 const divide = (firstNumber, lastNumber) => {
   if (firstNumber === 0 && lastNumber === 0) {
-    answer = 0;
-    bottomDisplay.textContent = "Result is undefined";
+    // answer = 0;
+    answer = "Result is undefined";
   } else if (lastNumber === 0) {
-    answer = 0;
-    bottomDisplay.textContent = "Cannot divide by zero";
+    // answer = 0;
+    answer = "Cannot divide by zero";
   } else {
     answer = firstNumber / lastNumber;
     bottomDisplay.textContent = answer;
@@ -91,6 +91,7 @@ const delOperand = () => {
       lastOperand.length >= 1 &&
       answer !== null &&
       hasOperate === true:
+    case answer === "Cannot divide by zero" || answer === "Result is undefined":
       reset();
       break;
     case operation === "" && firstOperand.length >= 1 && answer !== null:
@@ -123,6 +124,11 @@ const delOperand = () => {
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
     reset();
+  } else if (
+    answer === "Result is undefined" ||
+    answer === "Cannot divide by zero"
+  ) {
+    reset();
   } else if (topDisplay.textContent === "0 =") {
     reset();
   }
@@ -132,7 +138,7 @@ const getOperand = (event) => {
     case "−":
     case "×":
     case "÷":
-      if (lastOperand.length < 1 && event.target.value === "0") {
+      if (lastOperand.length <= 1 && event.target.value === "0") {
         bottomDisplay.textContent = "0";
       } else {
         lastOperand.push(event.target.value);
@@ -158,10 +164,13 @@ const getOperator = (event) => {
 
   if (firstOperand.length < 1) {
     firstOperand = [0];
+  } else if (bottomDisplay.textContent === "0") {
+    operation = prevOperation[prevOperation.length - 2];
+    lastOperand = [0];
+    operate(+firstOperand.join(""), +lastOperand.join(""), operation);
   } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
     firstOperand = [answer];
-    topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
     hasOperate = false;
   } else if (firstOperand.length >= 1 && lastOperand.length >= 1) {
     operate(
@@ -169,50 +178,92 @@ const getOperator = (event) => {
       +lastOperand.join(""),
       prevOperation[prevOperation.length - 2]
     );
-    topDisplay.textContent = `${answer} ${operation}`;
-    firstOperand = [answer];
-    lastOperand = [];
+
+    if (
+      firstOperand.join("") !== "0" &&
+      parseFloat(lastOperand.join("")) === 0
+    ) {
+      lastOperand = [parseFloat(lastOperand.join(""))];
+    } else if (
+      firstOperand.join("") === "0" &&
+      parseFloat(lastOperand.join("")) === 0
+    ) {
+      lastOperand = [parseFloat(lastOperand.join(""))];
+    } else {
+      lastOperand = [];
+      firstOperand = [answer];
+    }
   }
 
-  topDisplay.textContent = `${firstOperand.join("")} ${operation}`;
-  bottomDisplay.textContent = firstOperand.join("");
+  //remove non leading zeros
+  if (firstOperand.includes(".")) {
+    firstOperand = [parseFloat(firstOperand.join(""))];
+  } else {
+    firstOperand = [firstOperand.join("")];
+  }
+
+  //handle display
+  if (
+    firstOperand.length >= 1 &&
+    parseFloat(lastOperand.join("")) === 0 &&
+    bottomDisplay.textContent !== "0"
+  ) {
+    topDisplay.textContent = `${firstOperand} ${
+      prevOperation[prevOperation.length - 2]
+    } ${lastOperand} ${operation}`;
+    bottomDisplay.textContent = answer;
+  } else if (firstOperand.length >= 1 && bottomDisplay.textContent === "0") {
+    topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
+    bottomDisplay.textContent = answer;
+  } else {
+    topDisplay.textContent = `${firstOperand} ${operation}`;
+    bottomDisplay.textContent = firstOperand;
+  }
 };
 
 const checkOperands = () => {
   switch (true) {
-    case firstOperand.length < 1:
-      topDisplay.textContent = "0 =";
-      bottomDisplay.textContent = "0";
+    case operation !== "" &&
+      firstOperand.length >= 1 &&
+      lastOperand.length >= 1:
+      if (lastOperand.includes(".")) {
+        firstOperand = [parseFloat(firstOperand.join(""))];
+        lastOperand = [parseFloat(lastOperand.join(""))];
+      } else {
+        firstOperand = [firstOperand.join("")];
+        lastOperand = [lastOperand.join("")];
+      }
       break;
-    case firstOperand.length >= 1 && lastOperand.length < 1 && operation === "":
-      answer = firstOperand.join("");
-      topDisplay.textContent = `${answer} =`;
-      bottomDisplay.textContent = answer;
+    case operation !== "" && bottomDisplay.textContent === "0":
+      lastOperand = [0];
       break;
-    case firstOperand.length >= 1 &&
-      lastOperand.length >= 1 &&
-      operation !== "":
-      topDisplay.textContent = `${firstOperand.join(
-        ""
-      )} ${operation} ${lastOperand.join("")} =`;
-      break;
-    case bottomDisplay.textContent === "0":
-      lastOperand.push(0);
-      topDisplay.textContent = `${firstOperand.join(
-        ""
-      )} ${operation} ${lastOperand.join("")} =`;
-      break;
-    case firstOperand.length >= 1 && lastOperand.length < 1 && operation !== "":
+    case operation !== "" && lastOperand.length < 1:
       lastOperand = firstOperand;
-      topDisplay.textContent = `${firstOperand.join(
-        ""
-      )} ${operation} ${lastOperand.join("")} =`;
+      break;
+    case operation === "" && firstOperand.length < 1:
+      firstOperand = [0];
+      break;
+    case operation === "" && firstOperand.length >= 1:
+      firstOperand = [parseFloat(firstOperand.join(""))];
+      answer = firstOperand;
       break;
     default:
       break;
   }
 
   operate(+firstOperand.join(""), +lastOperand.join(""), operation);
+  //handle display
+  if (operation !== "") {
+    topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
+    bottomDisplay.textContent = answer;
+  } else if (operation === "") {
+    topDisplay.textContent = `${firstOperand} =`;
+    bottomDisplay.textContent = firstOperand;
+  } else {
+    topDisplay.textContent = `${firstOperand} ${operation}`;
+    bottomDisplay.textContent = firstOperand;
+  }
+
   hasOperate = true;
   prevOperation = [];
 };
