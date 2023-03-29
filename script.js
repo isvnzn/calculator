@@ -279,6 +279,7 @@ const applyDecimal = (event) => {
     case topDisplay.textContent === "0 =":
     case answer !== null && hasOperate === true:
       reset();
+      hasOperate = false;
       firstOperand = [0];
       firstOperand.push(event.target.value);
       topDisplay.textContent = firstOperand.join("");
