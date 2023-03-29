@@ -164,10 +164,16 @@ const getOperator = (event) => {
 
   if (firstOperand.length < 1) {
     firstOperand = [0];
-  } else if (bottomDisplay.textContent === "0") {
-    operation = prevOperation[prevOperation.length - 2];
+  } else if (
+    bottomDisplay.textContent === "0" &&
+    topDisplay.textContent !== "0 ="
+  ) {
     lastOperand = [0];
-    operate(+firstOperand.join(""), +lastOperand.join(""), operation);
+    operate(
+      +firstOperand.join(""),
+      +lastOperand.join(""),
+      prevOperation[prevOperation.length - 2]
+    );
   } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
     firstOperand = [answer];
@@ -212,7 +218,11 @@ const getOperator = (event) => {
       prevOperation[prevOperation.length - 2]
     } ${lastOperand} ${operation}`;
     bottomDisplay.textContent = answer;
-  } else if (firstOperand.length >= 1 && bottomDisplay.textContent === "0") {
+  } else if (
+    firstOperand.length >= 1 &&
+    bottomDisplay.textContent === "0" &&
+    topDisplay.textContent !== "0 ="
+  ) {
     topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
     bottomDisplay.textContent = answer;
   } else {
