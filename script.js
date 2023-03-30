@@ -6,6 +6,10 @@ const equalBtn = document.querySelector(".equals");
 const clearBtn = document.querySelector(".clear");
 const deleteBtn = document.querySelector(".delete");
 const decimalBtn = document.querySelector(".decimal");
+const timesBtn = document.querySelector(".times");
+const divideBtn = document.querySelector(".divide");
+const plusBtn = document.querySelector(".plus");
+const minusBtn = document.querySelector(".minus");
 
 let firstOperand = [];
 let lastOperand = [];
@@ -13,6 +17,7 @@ let answer = null;
 let operation = "";
 let prevOperation = [];
 let hasOperate = false;
+let areOperatorsDisabled = false;
 
 topDisplay.textContent = "0";
 
@@ -24,10 +29,16 @@ operators.forEach((operator) => {
   operator.addEventListener("click", (event) => getOperator(event));
 });
 
-clearBtn.addEventListener("click", () => reset());
+clearBtn.addEventListener("click", () => {
+  reset();
+  toggleOperators();
+});
 deleteBtn.addEventListener("click", () => delOperand());
 decimalBtn.addEventListener("click", (event) => applyDecimal(event));
-equalBtn.addEventListener("click", () => checkOperands());
+equalBtn.addEventListener("click", () => {
+  checkOperands();
+  toggleOperators();
+});
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -46,10 +57,8 @@ const multiply = (firstNumber, lastNumber) => {
 
 const divide = (firstNumber, lastNumber) => {
   if (firstNumber === 0 && lastNumber === 0) {
-    // answer = 0;
     answer = "Result is undefined";
   } else if (lastNumber === 0) {
-    // answer = 0;
     answer = "Cannot divide by zero";
   } else {
     answer = firstNumber / lastNumber;
@@ -119,16 +128,20 @@ const delOperand = () => {
     default:
       break;
   }
+
+  toggleOperators();
 };
 
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
     reset();
+    toggleOperators();
   } else if (
     answer === "Result is undefined" ||
     answer === "Cannot divide by zero"
   ) {
     reset();
+    toggleOperators();
   } else if (topDisplay.textContent === "0 =") {
     reset();
   }
@@ -198,7 +211,7 @@ const getOperator = (event) => {
 
   removeFirstOperandZero();
   setDisplayOnOperator();
-  console.log(hasOperate);
+  toggleOperators();
 };
 
 const removeFirstOperandZero = () => {
@@ -241,6 +254,9 @@ const getDisplayOnOperator = () => {
 
 const checkOperands = () => {
   switch (true) {
+    case answer === "Result is undefined" || answer === "Cannot divide by zero":
+      reset();
+      break;
     case operation !== "" &&
       firstOperand.length >= 1 &&
       lastOperand.length >= 1:
@@ -279,9 +295,11 @@ const setDisplayOnEqual = () => {
   if (operation !== "") {
     topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
     bottomDisplay.textContent = answer;
-  } else if (operation === "") {
+  } else if (operation === "" && areOperatorsDisabled === false) {
     topDisplay.textContent = `${firstOperand} =`;
     bottomDisplay.textContent = firstOperand;
+  } else if (operation === "" && areOperatorsDisabled === true) {
+    topDisplay.textContent = "0";
   } else {
     topDisplay.textContent = `${firstOperand} ${operation}`;
     bottomDisplay.textContent = firstOperand;
@@ -324,6 +342,30 @@ const applyDecimal = (event) => {
       lastOperand = [0];
       lastOperand.push(event.target.value);
       bottomDisplay.textContent = lastOperand.join("");
+      break;
+    default:
+      break;
+  }
+};
+
+const toggleOperators = () => {
+  switch (true) {
+    case answer === "Cannot divide by zero" && areOperatorsDisabled === false:
+    case answer === "Result is undefined" && areOperatorsDisabled === false:
+      timesBtn.disabled = true;
+      divideBtn.disabled = true;
+      plusBtn.disabled = true;
+      minusBtn.disabled = true;
+      decimalBtn.disabled = true;
+      areOperatorsDisabled = true;
+      break;
+    case areOperatorsDisabled === true:
+      timesBtn.disabled = false;
+      divideBtn.disabled = false;
+      plusBtn.disabled = false;
+      minusBtn.disabled = false;
+      decimalBtn.disabled = false;
+      areOperatorsDisabled = false;
       break;
     default:
       break;
