@@ -138,8 +138,7 @@ const getOperand = (event) => {
     case "−":
     case "×":
     case "÷":
-      if (lastOperand.length <= 1 && event.target.value === "0") {
-        lastOperand.pop();
+      if (event.target.value === "0" && lastOperand.length < 1) {
         bottomDisplay.textContent = "0";
       } else if (lastOperand.length === 1 && lastOperand.join("") === "0") {
         lastOperand.pop();
@@ -174,11 +173,16 @@ const getOperator = (event) => {
     topDisplay.textContent !== "0 ="
   ) {
     lastOperand = [0];
+
     operate(
       +firstOperand.join(""),
       +lastOperand.join(""),
       prevOperation[prevOperation.length - 2]
     );
+
+    if (prevOperation[prevOperation.length - 2] !== "÷") {
+      firstOperand = [answer];
+    }
   } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
     firstOperand = [answer];
@@ -189,12 +193,15 @@ const getOperator = (event) => {
       +lastOperand.join(""),
       prevOperation[prevOperation.length - 2]
     );
-
     if (
       firstOperand.join("") !== "0" &&
       parseFloat(lastOperand.join("")) === 0
     ) {
       lastOperand = [parseFloat(lastOperand.join(""))];
+
+      if (prevOperation[prevOperation.length - 2] !== "÷") {
+        firstOperand = [answer];
+      }
     } else if (
       firstOperand.join("") === "0" &&
       parseFloat(lastOperand.join("")) === 0
@@ -214,21 +221,10 @@ const getOperator = (event) => {
   }
 
   //handle display
-  if (
-    firstOperand.length >= 1 &&
-    parseFloat(lastOperand.join("")) === 0 &&
-    bottomDisplay.textContent !== "0"
-  ) {
+  if (answer === "Result is undefined" || answer === "Cannot divide by zero") {
     topDisplay.textContent = `${firstOperand} ${
       prevOperation[prevOperation.length - 2]
     } ${lastOperand} ${operation}`;
-    bottomDisplay.textContent = answer;
-  } else if (
-    firstOperand.length >= 1 &&
-    bottomDisplay.textContent === "0" &&
-    topDisplay.textContent !== "0 ="
-  ) {
-    topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
     bottomDisplay.textContent = answer;
   } else {
     topDisplay.textContent = `${firstOperand} ${operation}`;
