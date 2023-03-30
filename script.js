@@ -193,34 +193,23 @@ const getOperator = (event) => {
       +lastOperand.join(""),
       prevOperation[prevOperation.length - 2]
     );
-    if (
-      firstOperand.join("") !== "0" &&
-      parseFloat(lastOperand.join("")) === 0
-    ) {
-      lastOperand = [parseFloat(lastOperand.join(""))];
-
-      if (prevOperation[prevOperation.length - 2] !== "÷") {
-        firstOperand = [answer];
-      }
-    } else if (
-      firstOperand.join("") === "0" &&
-      parseFloat(lastOperand.join("")) === 0
-    ) {
-      lastOperand = [parseFloat(lastOperand.join(""))];
-    } else {
-      lastOperand = [];
-      firstOperand = [answer];
-    }
+    getDisplayOnOperator();
   }
 
-  //remove non leading zeros
+  removeFirstOperandZero();
+  setDisplayOnOperator();
+  console.log(hasOperate);
+};
+
+const removeFirstOperandZero = () => {
   if (firstOperand.includes(".")) {
     firstOperand = [parseFloat(firstOperand.join(""))];
   } else {
     firstOperand = [firstOperand.join("")];
   }
+};
 
-  //handle display
+const setDisplayOnOperator = () => {
   if (answer === "Result is undefined" || answer === "Cannot divide by zero") {
     topDisplay.textContent = `${firstOperand} ${
       prevOperation[prevOperation.length - 2]
@@ -229,6 +218,24 @@ const getOperator = (event) => {
   } else {
     topDisplay.textContent = `${firstOperand} ${operation}`;
     bottomDisplay.textContent = firstOperand;
+  }
+};
+
+const getDisplayOnOperator = () => {
+  if (firstOperand.join("") !== "0" && parseFloat(lastOperand.join("")) === 0) {
+    lastOperand = [parseFloat(lastOperand.join(""))];
+
+    if (prevOperation[prevOperation.length - 2] !== "÷") {
+      firstOperand = [answer];
+    }
+  } else if (
+    firstOperand.join("") === "0" &&
+    parseFloat(lastOperand.join("")) === 0
+  ) {
+    lastOperand = [parseFloat(lastOperand.join(""))];
+  } else {
+    lastOperand = [];
+    firstOperand = [answer];
   }
 };
 
@@ -263,7 +270,12 @@ const checkOperands = () => {
   }
 
   operate(+firstOperand.join(""), +lastOperand.join(""), operation);
-  //handle display
+  setDisplayOnEqual();
+  hasOperate = true;
+  prevOperation = [];
+};
+
+const setDisplayOnEqual = () => {
   if (operation !== "") {
     topDisplay.textContent = `${firstOperand} ${operation} ${lastOperand} =`;
     bottomDisplay.textContent = answer;
@@ -274,9 +286,6 @@ const checkOperands = () => {
     topDisplay.textContent = `${firstOperand} ${operation}`;
     bottomDisplay.textContent = firstOperand;
   }
-
-  hasOperate = true;
-  prevOperation = [];
 };
 
 const applyDecimal = (event) => {
