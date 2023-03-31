@@ -10,6 +10,7 @@ const timesBtn = document.querySelector(".times");
 const divideBtn = document.querySelector(".divide");
 const plusBtn = document.querySelector(".plus");
 const minusBtn = document.querySelector(".minus");
+const positiveNegativeBtn = document.querySelector(".positiveNegative");
 
 let firstOperand = [];
 let lastOperand = [];
@@ -18,6 +19,8 @@ let operation = "";
 let prevOperation = [];
 let hasOperate = false;
 let areOperatorsDisabled = false;
+let isFirstOperandNegative = false;
+let isLastOperandNegative = false;
 
 topDisplay.textContent = "0";
 
@@ -31,13 +34,14 @@ operators.forEach((operator) => {
 
 clearBtn.addEventListener("click", () => {
   reset();
-  toggleOperators();
+  disableOperators();
 });
 deleteBtn.addEventListener("click", () => delOperand());
 decimalBtn.addEventListener("click", (event) => applyDecimal(event));
+positiveNegativeBtn.addEventListener("click", () => togglePositiveNegative());
 equalBtn.addEventListener("click", () => {
   checkOperands();
-  toggleOperators();
+  disableOperators();
 });
 
 const add = (firstNumber, lastNumber) => {
@@ -92,6 +96,7 @@ const reset = () => {
   answer = null;
   topDisplay.textContent = "0";
   bottomDisplay.textContent = "";
+  hasOperate = false;
 };
 
 const delOperand = () => {
@@ -107,41 +112,68 @@ const delOperand = () => {
     case operation !== "" && firstOperand.length >= 1 && lastOperand.length < 1:
       break;
     case firstOperand.length > 1 && lastOperand.length < 1:
-      firstOperand.pop();
-      topDisplay.textContent = firstOperand.join("");
+      if (
+        firstOperand.join("").includes("-") &&
+        firstOperand.join("") === "-0."
+      ) {
+        firstOperand = [];
+        topDisplay.textContent = "0";
+      } else if (
+        firstOperand.join("").includes("-") &&
+        firstOperand.length < 3
+      ) {
+        firstOperand = [];
+        topDisplay.textContent = "0";
+      } else if (firstOperand.join("") === "0.") {
+        firstOperand = [];
+        topDisplay.textContent = "0";
+      } else {
+        firstOperand.pop();
+        topDisplay.textContent = firstOperand.join("");
+      }
       break;
     case lastOperand.length > 1 && firstOperand.length >= 1:
-    case firstOperand[0] === 0 && lastOperand.length > 1:
-      lastOperand.pop();
-      bottomDisplay.textContent = lastOperand.join("");
+      if (
+        lastOperand.join("").includes("-") &&
+        lastOperand.join("") === "-0."
+      ) {
+        lastOperand = [0];
+        bottomDisplay.textContent = "0";
+      } else if (lastOperand.join("").includes("-") && lastOperand.length < 3) {
+        lastOperand = [0];
+        bottomDisplay.textContent = "0";
+      } else {
+        lastOperand.pop();
+        bottomDisplay.textContent = lastOperand.join("");
+      }
       break;
     case firstOperand.length <= 1 &&
       lastOperand.length < 1 &&
       topDisplay.textContent !== "0 =":
-      topDisplay.textContent = "0";
       firstOperand = [];
+      topDisplay.textContent = "0";
       break;
     case lastOperand.length <= 1:
+      lastOperand = [0];
       bottomDisplay.textContent = "0";
-      lastOperand = [];
       break;
     default:
       break;
   }
 
-  toggleOperators();
+  disableOperators();
 };
 
 const getOperand = (event) => {
   if (answer !== null && hasOperate === true) {
     reset();
-    toggleOperators();
+    disableOperators();
   } else if (
     answer === "Result is undefined" ||
     answer === "Cannot divide by zero"
   ) {
     reset();
-    toggleOperators();
+    disableOperators();
   } else if (topDisplay.textContent === "0 =") {
     reset();
   }
@@ -211,7 +243,7 @@ const getOperator = (event) => {
 
   removeFirstOperandZero();
   setDisplayOnOperator();
-  toggleOperators();
+  disableOperators();
 };
 
 const removeFirstOperandZero = () => {
@@ -272,14 +304,16 @@ const checkOperands = () => {
       lastOperand = [0];
       break;
     case operation !== "" && lastOperand.length < 1:
-      lastOperand = firstOperand;
+      lastOperand = [firstOperand.join("")];
       break;
     case operation === "" && firstOperand.length < 1:
       firstOperand = [0];
       break;
     case operation === "" && firstOperand.length >= 1:
       firstOperand = [parseFloat(firstOperand.join(""))];
-      answer = firstOperand;
+      if (parseFloat(firstOperand.join("")) !== 0) {
+        answer = firstOperand;
+      }
       break;
     default:
       break;
@@ -312,6 +346,7 @@ const applyDecimal = (event) => {
       firstOperand.length >= 1 &&
       operation === "" &&
       hasOperate === false:
+    case firstOperand.includes(".") && firstOperand.length < 1:
     case lastOperand.includes(".") && operation !== "":
       break;
     case topDisplay.textContent === "0 =":
@@ -337,8 +372,7 @@ const applyDecimal = (event) => {
       lastOperand.push(event.target.value);
       bottomDisplay.textContent = lastOperand.join("");
       break;
-    case firstOperand.length >= 1 && operation !== "":
-    case firstOperand.length >= 1 && hasOperate === true:
+    case firstOperand.length >= 1 && lastOperand.length < 1 && operation !== "":
       lastOperand = [0];
       lastOperand.push(event.target.value);
       bottomDisplay.textContent = lastOperand.join("");
@@ -348,7 +382,7 @@ const applyDecimal = (event) => {
   }
 };
 
-const toggleOperators = () => {
+const disableOperators = () => {
   switch (true) {
     case answer === "Cannot divide by zero" && areOperatorsDisabled === false:
     case answer === "Result is undefined" && areOperatorsDisabled === false:
@@ -357,6 +391,7 @@ const toggleOperators = () => {
       plusBtn.disabled = true;
       minusBtn.disabled = true;
       decimalBtn.disabled = true;
+      positiveNegativeBtn.disabled = true;
       areOperatorsDisabled = true;
       break;
     case areOperatorsDisabled === true:
@@ -365,9 +400,87 @@ const toggleOperators = () => {
       plusBtn.disabled = false;
       minusBtn.disabled = false;
       decimalBtn.disabled = false;
+      positiveNegativeBtn.disabled = false;
       areOperatorsDisabled = false;
       break;
     default:
       break;
+  }
+};
+
+const toggleFirstOperand = () => {
+  switch (true) {
+    case topDisplay.textContent === "0":
+    case parseFloat(firstOperand.join("")) === 0:
+      break;
+    case firstOperand.join("").includes("-") &&
+      lastOperand.length < 1 &&
+      hasOperate === false:
+      firstOperand.shift();
+      isFirstOperandNegative = false;
+      topDisplay.textContent = firstOperand.join("");
+      break;
+    case !firstOperand.join("").includes("-"):
+      firstOperand.unshift("-");
+      isFirstOperandNegative = true;
+      topDisplay.textContent = firstOperand.join("");
+      break;
+    default:
+      break;
+  }
+};
+
+const toggleLastOperand = () => {
+  switch (true) {
+    case bottomDisplay.textContent === "0":
+    case parseFloat(lastOperand.join("")) === 0:
+      break;
+    case lastOperand.join("").includes("-"):
+      lastOperand.shift();
+      isLastOperandNegative = false;
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    case !firstOperand.join("").includes("-"):
+      lastOperand = bottomDisplay.textContent.split("");
+      lastOperand.unshift("-");
+      isLastOperandNegative = true;
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    case firstOperand.join("").includes("-"):
+      if (firstOperand.join("") === bottomDisplay.textContent) {
+        lastOperand = bottomDisplay.textContent.split("").slice(1);
+        isLastOperandNegative = false;
+      } else {
+        lastOperand.unshift("-");
+        isLastOperandNegative = true;
+      }
+
+      bottomDisplay.textContent = lastOperand.join("");
+      break;
+    default:
+      break;
+  }
+};
+
+const togglePositiveNegative = () => {
+  if (topDisplay.textContent.includes("=") && hasOperate === true) {
+    if (answer === null) {
+      firstOperand = [];
+      topDisplay.textContent = "0";
+    } else {
+      firstOperand = answer.toString().split("");
+      topDisplay.textContent = firstOperand.join("");
+    }
+
+    bottomDisplay.textContent = "";
+    operation = "";
+    lastOperand = [];
+    answer = null;
+    hasOperate = false;
+    toggleFirstOperand();
+  } else if (firstOperand.length >= 1 && operation === "") {
+    toggleFirstOperand();
+  } else if (firstOperand.length >= 1 && operation !== "") {
+    toggleLastOperand();
   }
 };
