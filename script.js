@@ -52,6 +52,7 @@ equalBtn.addEventListener("click", () => {
 
 deleteBtn.addEventListener("click", () => delOperand());
 positiveNegativeBtn.addEventListener("click", () => togglePositiveNegative());
+document.addEventListener("keydown", (event) => addKeyboardSupport(event));
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -509,7 +510,7 @@ const togglePositiveNegative = () => {
   }
 };
 
-document.addEventListener("keydown", (event) => {
+const addKeyboardSupport = () => {
   switch (true) {
     case event.key === "," && areOperatorsDisabled === false:
       togglePositiveNegative();
@@ -565,4 +566,4 @@ document.addEventListener("keydown", (event) => {
     default:
       break;
   }
-});
+};
