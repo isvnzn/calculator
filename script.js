@@ -14,6 +14,8 @@ const positiveNegativeBtn = document.querySelector(".positiveNegative");
 
 let firstOperand = [];
 let lastOperand = [];
+let operand;
+let decimal;
 let answer = null;
 let operation = "";
 let prevOperation = [];
@@ -25,24 +27,31 @@ let isLastOperandNegative = false;
 topDisplay.textContent = "0";
 
 numbers.forEach((number) => {
-  number.addEventListener("click", (event) => getOperand(event));
+  number.addEventListener("click", (event) => getOperand({ pointer: event }));
 });
 
 operators.forEach((operator) => {
-  operator.addEventListener("click", (event) => getOperator(event));
+  operator.addEventListener("click", (event) =>
+    getOperator({ pointer: event })
+  );
 });
 
 clearBtn.addEventListener("click", () => {
   reset();
   disableOperators();
 });
-deleteBtn.addEventListener("click", () => delOperand());
-decimalBtn.addEventListener("click", (event) => applyDecimal(event));
-positiveNegativeBtn.addEventListener("click", () => togglePositiveNegative());
+
+decimalBtn.addEventListener("click", (event) =>
+  applyDecimal({ pointer: event })
+);
+
 equalBtn.addEventListener("click", () => {
   checkOperands();
   disableOperators();
 });
+
+deleteBtn.addEventListener("click", () => delOperand());
+positiveNegativeBtn.addEventListener("click", () => togglePositiveNegative());
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
@@ -164,7 +173,10 @@ const delOperand = () => {
   disableOperators();
 };
 
-const getOperand = (event) => {
+const getOperand = (obj) => {
+  const { keyboard, pointer } = obj;
+  !obj.pointer ? (operand = keyboard.key) : (operand = pointer.target.value);
+
   if (answer !== null && hasOperate === true) {
     reset();
     disableOperators();
@@ -183,32 +195,39 @@ const getOperand = (event) => {
     case "−":
     case "×":
     case "÷":
-      if (event.target.value === "0" && lastOperand.length < 1) {
+      if (operand === "0" && lastOperand.length < 1) {
         bottomDisplay.textContent = "0";
       } else if (lastOperand.length === 1 && lastOperand.join("") === "0") {
         lastOperand.pop();
-        lastOperand.push(event.target.value);
+        lastOperand.push(operand);
+        bottomDisplay.textContent = lastOperand.join("");
+      } else if (
+        firstOperand.join("") === bottomDisplay.textContent &&
+        isLastOperandNegative === true
+      ) {
+        lastOperand = [];
+        lastOperand.push(operand);
         bottomDisplay.textContent = lastOperand.join("");
       } else {
-        lastOperand.push(event.target.value);
+        lastOperand.push(operand);
         bottomDisplay.textContent = lastOperand.join("");
       }
       break;
     default:
-      if (firstOperand.length < 1 && event.target.value === "0") {
+      if (firstOperand.length < 1 && operand === "0") {
         topDisplay.textContent = "0";
       } else {
-        firstOperand.push(event.target.value);
+        firstOperand.push(operand);
         topDisplay.textContent = firstOperand.join("");
       }
       break;
   }
-
   hasOperate = false;
 };
 
-const getOperator = (event) => {
-  operation = event.target.value;
+const getOperator = (obj) => {
+  const { keyboard, pointer } = obj;
+  !pointer ? (operation = keyboard) : (operation = pointer.target.value);
   prevOperation.push(operation);
 
   if (firstOperand.length < 1) {
@@ -227,6 +246,7 @@ const getOperator = (event) => {
 
     if (prevOperation[prevOperation.length - 2] !== "÷") {
       firstOperand = [answer];
+      hasOperate = false;
     }
   } else if (answer !== null && hasOperate === true) {
     lastOperand = [];
@@ -311,6 +331,7 @@ const checkOperands = () => {
       break;
     case operation === "" && firstOperand.length >= 1:
       firstOperand = [parseFloat(firstOperand.join(""))];
+
       if (parseFloat(firstOperand.join("")) !== 0) {
         answer = firstOperand;
       }
@@ -340,7 +361,10 @@ const setDisplayOnEqual = () => {
   }
 };
 
-const applyDecimal = (event) => {
+const applyDecimal = (obj) => {
+  const { keyboard, pointer } = obj;
+  !pointer ? (decimal = keyboard) : (decimal = pointer.target.value);
+
   switch (true) {
     case firstOperand.includes(".") &&
       firstOperand.length >= 1 &&
@@ -354,27 +378,27 @@ const applyDecimal = (event) => {
       reset();
       hasOperate = false;
       firstOperand = [0];
-      firstOperand.push(event.target.value);
+      firstOperand.push(decimal);
       topDisplay.textContent = firstOperand.join("");
       break;
     case firstOperand.length >= 1 && operation === "" && hasOperate === false:
-      firstOperand.push(event.target.value);
+      firstOperand.push(decimal);
       topDisplay.textContent = firstOperand.join("");
       break;
     case lastOperand.length < 1 && operation === "" && hasOperate === false:
       firstOperand = [0];
-      firstOperand.push(event.target.value);
+      firstOperand.push(decimal);
       topDisplay.textContent = firstOperand.join("");
       break;
     case firstOperand.length >= 1 &&
       lastOperand.length >= 1 &&
       operation !== "":
-      lastOperand.push(event.target.value);
+      lastOperand.push(decimal);
       bottomDisplay.textContent = lastOperand.join("");
       break;
     case firstOperand.length >= 1 && lastOperand.length < 1 && operation !== "":
       lastOperand = [0];
-      lastOperand.push(event.target.value);
+      lastOperand.push(decimal);
       bottomDisplay.textContent = lastOperand.join("");
       break;
     default:
@@ -484,3 +508,61 @@ const togglePositiveNegative = () => {
     toggleLastOperand();
   }
 };
+
+document.addEventListener("keydown", (event) => {
+  switch (true) {
+    case event.key === "," && areOperatorsDisabled === false:
+      togglePositiveNegative();
+      event.preventDefault();
+      break;
+    case event.key === "." && areOperatorsDisabled === false:
+      applyDecimal({ keyboard: "." });
+      event.preventDefault();
+      break;
+    case event.key === "-" && areOperatorsDisabled === false:
+      getOperator({ keyboard: "−" });
+      event.preventDefault();
+      break;
+    case event.key === "/" && areOperatorsDisabled === false:
+      getOperator({ keyboard: "÷" });
+      event.preventDefault();
+      break;
+    case event.shiftKey && event.key === "*" && areOperatorsDisabled === false:
+      getOperator({ keyboard: "×" });
+      event.preventDefault();
+      break;
+    case event.shiftKey && event.key === "+" && areOperatorsDisabled === false:
+      getOperator({ keyboard: "+" });
+      event.preventDefault();
+      break;
+    case event.key === "Backspace":
+      delOperand();
+      event.preventDefault();
+      break;
+    case event.key === "Escape":
+      reset();
+      disableOperators();
+      event.preventDefault();
+      break;
+    case event.key === "=" || event.key === "Enter":
+      checkOperands();
+      disableOperators(event);
+      event.preventDefault();
+      break;
+    case event.key === "0":
+    case event.key === "1":
+    case event.key === "2":
+    case event.key === "3":
+    case event.key === "4":
+    case event.key === "5":
+    case event.key === "6":
+    case event.key === "7":
+    case event.key === "8":
+    case event.key === "9":
+      getOperand({ keyboard: event });
+      event.preventDefault();
+      break;
+    default:
+      break;
+  }
+});
