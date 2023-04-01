@@ -510,7 +510,7 @@ const togglePositiveNegative = () => {
   }
 };
 
-const addKeyboardSupport = () => {
+const addKeyboardSupport = (event) => {
   switch (true) {
     case event.key === "," && areOperatorsDisabled === false:
       togglePositiveNegative();
