@@ -1,8 +1,74 @@
-.bottomDisplay {
-  background-color: yellow;
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
 }
 
-.topDisplay {
-  background-color: aqua;
-  display: block;
+body {
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
+  margin: 0;
+  font-size: 62.5%;
+  background-color: #202020;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+}
+
+.calculator {
+  width: 350px;
+  margin-top: 100px;
+  border: 1px solid #fff;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.topDisplay,
+.bottomDisplay {
+  overflow: hidden;
+  margin: 0 12px;
+  text-align: right;
+}
+
+.display {
+  margin: 13px 0 25px;
+  padding: 12px 0 4px;
+  border-radius: 2px;
+  background-color: #3c3c3c;
+}
+
+.keypad {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+}
+
+.left,
+.right {
+  display: flex;
+  flex-wrap: wrap;
+  flex-basis: 100%;
+  gap: 2px;
+}
+
+.left *,
+.right * {
+  flex-grow: 1;
+  flex-basis: 48%;
+}
+
+button {
+  padding: 12px 0;
+  font-size: 1.25rem;
+}
+
+.clear {
+  flex-basis: 100%;
+}
+
+.delete {
+  font-size: 1rem;
+  padding: 0;
 }
