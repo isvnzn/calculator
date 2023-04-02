@@ -28,13 +28,13 @@ body {
 .topDisplay,
 .bottomDisplay {
   overflow: hidden;
-  margin: 0 12px;
+  margin: 0 8px;
   text-align: right;
 }
 
 .display {
   margin: 13px 0 25px;
-  padding: 12px 0 4px;
+  padding: 10px 0 0;
   border-radius: 2px;
   background-color: #3c3c3c;
 }
