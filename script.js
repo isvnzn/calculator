@@ -396,7 +396,8 @@ const setDisplayOnEqual = () => {
     bottomDisplay.textContent = answer;
   } else if (operation === "" && areOperatorsDisabled === false) {
     topDisplay.textContent = `${firstOperand} =`;
-    bottomDisplay.textContent = answer;
+    bottomDisplay.textContent =
+      topDisplay.textContent === "0 =" ? firstOperand : answer;
   } else if (operation === "" && areOperatorsDisabled === true) {
     topDisplay.textContent = "0";
   } else {
