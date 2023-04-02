@@ -16,7 +16,6 @@ const display = topDisplay.parentNode;
 let displayChildTop = display.firstElementChild;
 let displayChildBottom = display.lastElementChild;
 displayChildBottom.parentNode.insertBefore(displayChildBottom, displayChildTop);
-bottomDisplay.style.height = "30px";
 
 let firstOperand = [];
 let lastOperand = [];
@@ -32,14 +31,19 @@ let isLastOperandNegative = false;
 
 topDisplay.textContent = "0";
 
+bottomDisplay.style.height = "22px";
+topDisplay.style.height = "50px";
+topDisplay.style.fontSize = "2.25rem";
+topDisplay.style.fontWeight = "700";
+
 const styleBottomDisplay = () => {
   displayChildTop.parentNode.insertBefore(displayChildTop, displayChildBottom);
-  topDisplay.style.height = "30px";
+  topDisplay.style.height = "22px";
   topDisplay.style.fontSize = "1rem";
   topDisplay.style.fontWeight = "400";
   bottomDisplay.style.height = "50px";
   bottomDisplay.style.fontSize = "2.25rem";
-  bottomDisplay.style.fontWeight = "600";
+  bottomDisplay.style.fontWeight = "700";
 };
 
 const styleTopDisplay = () => {
@@ -50,7 +54,7 @@ const styleTopDisplay = () => {
   topDisplay.style.height = "50px";
   topDisplay.style.fontSize = "2.25rem";
   topDisplay.style.fontWeight = "700";
-  bottomDisplay.style.height = "30px";
+  bottomDisplay.style.height = "22px";
 };
 
 numbers.forEach((number) => {
@@ -98,9 +102,9 @@ const multiply = (firstNumber, lastNumber) => {
 
 const divide = (firstNumber, lastNumber) => {
   if (firstNumber === 0 && lastNumber === 0) {
-    answer = "Result is undefined";
+    answer = "error";
   } else if (lastNumber === 0) {
-    answer = "Cannot divide by zero";
+    answer = "infinity";
   } else {
     answer = firstNumber / lastNumber;
     bottomDisplay.textContent = answer;
@@ -142,7 +146,7 @@ const delOperand = () => {
       lastOperand.length >= 1 &&
       answer !== null &&
       hasOperate === true:
-    case answer === "Cannot divide by zero" || answer === "Result is undefined":
+    case answer === "infinity" || answer === "error":
       reset();
       break;
     case operation === "" && firstOperand.length >= 1 && answer !== null:
@@ -208,10 +212,7 @@ const getOperand = (obj) => {
   if (answer !== null && hasOperate === true) {
     reset();
     disableOperators();
-  } else if (
-    answer === "Result is undefined" ||
-    answer === "Cannot divide by zero"
-  ) {
+  } else if (answer === "error" || answer === "infinity") {
     reset();
     disableOperators();
   } else if (topDisplay.textContent === "0 =") {
@@ -306,7 +307,7 @@ const removeFirstOperandZero = () => {
 };
 
 const setDisplayOnOperator = () => {
-  if (answer === "Result is undefined" || answer === "Cannot divide by zero") {
+  if (answer === "error" || answer === "infinity") {
     topDisplay.textContent = `${firstOperand} ${
       prevOperation[prevOperation.length - 2]
     } ${lastOperand} ${operation}`;
@@ -337,7 +338,7 @@ const getDisplayOnOperator = () => {
 
 const checkOperands = () => {
   switch (true) {
-    case answer === "Result is undefined" || answer === "Cannot divide by zero":
+    case answer === "error" || answer === "infinity":
       reset();
       break;
     case operation !== "" &&
@@ -442,8 +443,8 @@ const applyDecimal = (obj) => {
 
 const disableOperators = () => {
   switch (true) {
-    case answer === "Cannot divide by zero" && areOperatorsDisabled === false:
-    case answer === "Result is undefined" && areOperatorsDisabled === false:
+    case answer === "infinity" && areOperatorsDisabled === false:
+    case answer === "error" && areOperatorsDisabled === false:
       timesBtn.disabled = true;
       divideBtn.disabled = true;
       plusBtn.disabled = true;
