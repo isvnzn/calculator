@@ -11,6 +11,12 @@ const divideBtn = document.querySelector(".divide");
 const plusBtn = document.querySelector(".plus");
 const minusBtn = document.querySelector(".minus");
 const positiveNegativeBtn = document.querySelector(".positiveNegative");
+const display = topDisplay.parentNode;
+
+let displayChildTop = display.firstElementChild;
+let displayChildBottom = display.lastElementChild;
+displayChildBottom.parentNode.insertBefore(displayChildBottom, displayChildTop);
+bottomDisplay.style.height = "30px";
 
 let firstOperand = [];
 let lastOperand = [];
@@ -25,6 +31,27 @@ let isFirstOperandNegative = false;
 let isLastOperandNegative = false;
 
 topDisplay.textContent = "0";
+
+const styleBottomDisplay = () => {
+  displayChildTop.parentNode.insertBefore(displayChildTop, displayChildBottom);
+  topDisplay.style.height = "30px";
+  topDisplay.style.fontSize = "1rem";
+  topDisplay.style.fontWeight = "400";
+  bottomDisplay.style.height = "50px";
+  bottomDisplay.style.fontSize = "2.25rem";
+  bottomDisplay.style.fontWeight = "600";
+};
+
+const styleTopDisplay = () => {
+  displayChildBottom.parentNode.insertBefore(
+    displayChildBottom,
+    displayChildTop
+  );
+  topDisplay.style.height = "50px";
+  topDisplay.style.fontSize = "2.25rem";
+  topDisplay.style.fontWeight = "700";
+  bottomDisplay.style.height = "30px";
+};
 
 numbers.forEach((number) => {
   number.addEventListener("click", (event) => getOperand({ pointer: event }));
@@ -223,7 +250,9 @@ const getOperand = (obj) => {
       }
       break;
   }
+
   hasOperate = false;
+  swapDisplay();
 };
 
 const getOperator = (obj) => {
@@ -265,6 +294,7 @@ const getOperator = (obj) => {
   removeFirstOperandZero();
   setDisplayOnOperator();
   disableOperators();
+  swapDisplay();
 };
 
 const removeFirstOperandZero = () => {
@@ -345,6 +375,7 @@ const checkOperands = () => {
   setDisplayOnEqual();
   hasOperate = true;
   prevOperation = [];
+  swapDisplay();
 };
 
 const setDisplayOnEqual = () => {
@@ -405,6 +436,8 @@ const applyDecimal = (obj) => {
     default:
       break;
   }
+
+  swapDisplay();
 };
 
 const disableOperators = () => {
@@ -508,6 +541,8 @@ const togglePositiveNegative = () => {
   } else if (firstOperand.length >= 1 && operation !== "") {
     toggleLastOperand();
   }
+
+  swapDisplay();
 };
 
 const addKeyboardSupport = (event) => {
@@ -538,11 +573,13 @@ const addKeyboardSupport = (event) => {
       break;
     case event.key === "Backspace":
       delOperand();
+      swapDisplay();
       event.preventDefault();
       break;
     case event.key === "Escape":
       reset();
       disableOperators();
+      swapDisplay();
       event.preventDefault();
       break;
     case event.key === "=" || event.key === "Enter":
@@ -565,5 +602,21 @@ const addKeyboardSupport = (event) => {
       break;
     default:
       break;
+  }
+};
+
+const swapDisplay = () => {
+  if (bottomDisplay.textContent === "" && hasOperate === false) {
+    styleTopDisplay();
+  } else if (operation !== "") {
+    styleBottomDisplay();
+  } else if (
+    hasOperate === true &&
+    operation === "" &&
+    topDisplay.textContent.includes("=")
+  ) {
+    styleBottomDisplay();
+  } else {
+    styleTopDisplay();
   }
 };
