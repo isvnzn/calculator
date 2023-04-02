@@ -87,16 +87,19 @@ document.addEventListener("keydown", (event) => addKeyboardSupport(event));
 
 const add = (firstNumber, lastNumber) => {
   answer = firstNumber + lastNumber;
+  answer = round(answer);
   bottomDisplay.textContent = answer;
 };
 
 const subtract = (firstNumber, lastNumber) => {
   answer = firstNumber - lastNumber;
+  answer = round(answer);
   bottomDisplay.textContent = answer;
 };
 
 const multiply = (firstNumber, lastNumber) => {
   answer = firstNumber * lastNumber;
+  answer = round(answer);
   bottomDisplay.textContent = answer;
 };
 
@@ -107,6 +110,7 @@ const divide = (firstNumber, lastNumber) => {
     answer = "infinity";
   } else {
     answer = firstNumber / lastNumber;
+    answer = round(answer);
     bottomDisplay.textContent = answer;
   }
 };
@@ -128,6 +132,12 @@ const operate = (firstNumber, lastNumber, operator) => {
     default:
       break;
   }
+};
+
+const round = (num) => {
+  let p = Math.pow(10, 2);
+  let n = num * p * (1 + Number.EPSILON);
+  return Math.round(n) / p;
 };
 
 const reset = () => {
@@ -366,6 +376,7 @@ const checkOperands = () => {
 
       if (parseFloat(firstOperand.join("")) !== 0) {
         answer = firstOperand;
+        answer = round(answer);
       }
       break;
     default:
@@ -385,7 +396,7 @@ const setDisplayOnEqual = () => {
     bottomDisplay.textContent = answer;
   } else if (operation === "" && areOperatorsDisabled === false) {
     topDisplay.textContent = `${firstOperand} =`;
-    bottomDisplay.textContent = firstOperand;
+    bottomDisplay.textContent = answer;
   } else if (operation === "" && areOperatorsDisabled === true) {
     topDisplay.textContent = "0";
   } else {
